@@ -1,40 +1,49 @@
 import React from 'react';
-import { StyleSheet, View} from 'react-native';
+import { StyleSheet, View,Platform} from 'react-native';
 import {Container, Header, Content, Body, Text, Footer, Item, Input, Icon, Label,Form,Picker, Button } from 'native-base'
 import ValidationComponent from 'react-native-form-validator'
-import {StoreReview} from 'expo'
+import {Font, StoreReview} from 'expo'
 
 export default class App extends ValidationComponent {
     constructor(props){
         super(props)
         this.state={
-            bill:'',
+            bill:"20",
             tip:'',
             score:'',
-            percent:'',
-            nice:null,
-            time:null,
-            knowledge:null,
-            total:0
+            percent:0,
+            nice:0,
+            time:0,
+            knowledge:2,
+            total:0,
+            tip:0
         }
+
+         this.calculateTip = this.calculateTip.bind(this)
+         this.renderTip = this.renderTip.bind(this)
     }
-    
+
     _onSubmit() {
   // Call ValidationComponent validate method
   this.validate({
     bill: {minlength:1, required: true},
-    
+
   });
 }
-    
+async componentWillMount() {
+   await Font.loadAsync({
+     Roboto: require("./node_modules/native-base/Fonts/Roboto.ttf"),
+     Roboto_medium: require("./node_modules/native-base/Fonts/Roboto_medium.ttf")
+   })
+ }
     renderInputs(){
         if (!this.state.bill.length > 0){
             return(<Item fixedlabel>
                         <Label>$</Label>
                         <Input placeholder="How much was the bill?" value={this.state.bill} onChangeText={event => this.setState({
                                 bill: event
-                            }) 
-                            
+                            })
+
                         } />
                         <Icon name='checkmark-circle' />
                     </Item>)
@@ -43,12 +52,12 @@ export default class App extends ValidationComponent {
                         <Label style={{color:"green"}}>$</Label>
                         <Input placeholder="How much was the bill?" value={this.state.bill} onChangeText={event => this.setState({
                                 bill: event
-                            })                                                                          
+                            })
                         } />
                         <Icon name='checkmark-circle' />
-                    
+
                     </Item>
-                    
+
                  )
         }
         else if(!this.validate({bill:{numbers:false}})){
@@ -56,32 +65,32 @@ export default class App extends ValidationComponent {
                         <Label style={{color:"red"}}>$</Label>
                         <Input placeholder="How much was the bill?" value={this.state.bill} onChangeText={event => this.setState({
                                 bill: event
-                            })                                                                          
+                            })
                         } />
                         <Icon name='close-circle' />
-                        
+
                     </Item>)
         }else{
             return( <Item fixedlabel >
                         <Label>$</Label>
                         <Input placeholder="How much was the bill?" value={this.state.bill} onChangeText={event => this.setState({
                                 bill: event
-                            })                                                                          
+                            })
                         } />
                         <Icon name='checkmark-circle' />
                     </Item>)
         }
     }
-    
+
     renderNice(){
         if(this.state.nice === null){
             return(<Item stackedLabel>
-                    
+
                     <Label>Was Your Server Nice to You?</Label>
                     <Picker
                           iosIcon={<Icon name="ios-arrow-down-outline"/>}
                           mode="dropdown"
-                         
+                          style={{ width:(Platform.OS === 'ios') ? undefined : 120 }}
                           selectedValue={this.state.nice}
                           onValueChange={value => this.setState({nice: value})}
                         >
@@ -96,12 +105,13 @@ export default class App extends ValidationComponent {
         }
         else{
             return(<Item stackedLabel success>
-                    
+
                     <Label>Was Your Server Nice to You?</Label>
                     <Picker
                           iosIcon={<Icon name="ios-arrow-down-outline"/>}
                           mode="dropdown"
-                          
+                            style={{ width:(Platform.OS === 'ios') ? undefined : 120 }}
+
                           selectedValue={this.state.nice}
                           onValueChange={value => this.setState({nice: value})}
                         >
@@ -112,11 +122,11 @@ export default class App extends ValidationComponent {
                           <Picker.Item label="Very Friendly" value={2} />
                           <Picker.Item disabled label="Select an option" value={null}/>
                         </Picker>
-                        
+
                     </Item>)
         }
     }
-    
+
     renderTime(){
         if(this.state.time===null){
             return(
@@ -126,7 +136,7 @@ export default class App extends ValidationComponent {
                           iosIcon={<Icon name="ios-arrow-down-outline"/>}
                           mode="dropdown"
                           iosHeader="Pick an option:"
-                         
+                          style={{ width:(Platform.OS === 'ios') ? undefined : 120 }}
                           selectedValue={this.state.time}
                           onValueChange={value => this.setState({time: value})}
                         >
@@ -137,7 +147,7 @@ export default class App extends ValidationComponent {
                           <Picker.Item label="Came Extremely Quick!" value={2} />
                           <Picker.Item label="Select an option..." value={null}/>
                         </Picker>
-                        
+
                 </Item>
             )
         }else{
@@ -147,7 +157,7 @@ export default class App extends ValidationComponent {
                           iosIcon={<Icon name="ios-arrow-down-outline"/>}
                           mode="dropdown"
                           iosHeader="Pick an option:"
-                         
+                          style={{ width:(Platform.OS === 'ios') ? undefined : 120 }}
                           selectedValue={this.state.time}
                           onValueChange={value => this.setState({time: value})}
                         >
@@ -158,11 +168,11 @@ export default class App extends ValidationComponent {
                           <Picker.Item label="Came Extremely Quick!" value={2} />
                           <Picker.Item label="Select an option..." value={null}/>
                         </Picker>
-                        
+
                 </Item>)
         }
     }
-    
+
     renderKnowledge(){
         if (this.state.knowledge===null){
             return(
@@ -172,17 +182,17 @@ export default class App extends ValidationComponent {
                           iosIcon={<Icon name="ios-arrow-down-outline"/>}
                           mode="dropdown"
                           iosHeader="Pick an option:"
-                         
+                          style={{ width:(Platform.OS === 'ios') ? undefined : 120 }}
                           selectedValue={this.state.knowledge}
                           onValueChange={value => this.setState({knowledge: value})}
                         >
                           <Picker.Item label="Total Order Was a Mistake" value={-2} />
                           <Picker.Item label="Some Small Mistakes, But Were Fixed" value={0} />
                           <Picker.Item label="Everything Came Out Perfect" value={2}/>
-                          <Picker.Item label="Select an option..." value={null}/>  
-                          
+                          <Picker.Item label="Select an option..." value={null}/>
+
                         </Picker>
-                        
+
                 </Item>
             )
         }else{
@@ -193,33 +203,33 @@ export default class App extends ValidationComponent {
                           iosIcon={<Icon name="ios-arrow-down-outline"/>}
                           mode="dropdown"
                           iosHeader="Pick an option:"
-                         
+                          style={{ width:(Platform.OS === 'ios') ? undefined : 120 }}
                           selectedValue={this.state.knowledge}
                           onValueChange={value => this.setState({knowledge: value})}
                         >
                           <Picker.Item label="Total Order Was a Mistake" value={-2} />
                           <Picker.Item label="Some Small Mistakes, But Were Fixed" value={0} />
                           <Picker.Item label="Everything Came Out Perfect" value={2}/>
-                          <Picker.Item label="Select an option..." value={null}/>  
-                          
+                          <Picker.Item label="Select an option..." value={null}/>
+
                         </Picker>
-                        
+
                 </Item>
             )
         }
     }
     renderButton(){
-        if(this.state.nice !== null && this.state.time !== null && this.state.bill !== null){
+        if(this.state.nice !== null && this.state.time !== null && this.state.bill !== '' && this.state.knowledge !==null){
             return (
-                <Button success onPress={this.calculateTip()}><Text>Calculate Tip</Text></Button>
+                <Button success onPress={() => this.calculateTip()}><Text>Calculate Tip</Text></Button>
             )
         }
     }
     calculateTip(){
         const {nice, time, knowledge} = this.state
-        
+
         const score = nice + time + knowledge
-        
+
         if(score < 0 ){
             this.setState({
                 percent: .05
@@ -249,13 +259,23 @@ export default class App extends ValidationComponent {
                 percent: .20
             })
         }
-        
-        const total = this.state.bill + (this.state.bill * this.state.percent)
-        
-        this.setState({
-            total: total
-        })
+
     }
+    renderTip(){
+      const {bill, percent} = this.state
+      let tip = parseInt(bill) * parseInt(percent)
+      tip = tip.toFixed(2)
+      let total = bill + tip
+
+        return(
+
+          <Text>The tip should be ${tip}</Text>
+
+        )
+
+
+    }
+
   render() {
     return (
       <Container >
@@ -263,28 +283,27 @@ export default class App extends ValidationComponent {
                 <Body>
                     <Text>Rational Tipper</Text>
                 </Body>
-            </Header> 
+            </Header>
             <Content scrollEnabled={false}
                 contentContainerStyle={{justifyContent:"center"}}
                 >
-                
+
                     <Body>
                     <Text>Never Under or Over Tip Again!</Text>
                 </Body>
-                    
+
                     <Form >
-                   
+
                     {this.renderInputs()}
                    {this.renderNice()}
                    {this.renderTime()}
                         {this.renderKnowledge()}
                     </Form>
-                    
+                  {this.renderButton()}
             </Content>
             <Footer>
-                
-                <Text>The total is ${parseInt(this.state.total)}</Text>
-                {this.renderButton()}
+              {this.renderTip()}
+
             </Footer>
     </Container>
     );
